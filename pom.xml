@@ -11,7 +11,7 @@
     
     <groupId>eu.clarin.cmdi</groupId>
     <artifactId>vlo-parent</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.0</version>
     <name>VLO API</name>
     <description>VLO API (parent project)</description>
     

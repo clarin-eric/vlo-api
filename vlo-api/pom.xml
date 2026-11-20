@@ -6,12 +6,12 @@
     <parent>
         <groupId>eu.clarin.cmdi</groupId>
         <artifactId>vlo-parent</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2.0</version>
     </parent>
     
     <groupId>eu.clarin.cmdi.vlo</groupId>
     <artifactId>vlo-api</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.0</version>
 
     <name>vlo-api</name>
     <description>VLO API</description>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
             <artifactId>vlo-api-model</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
