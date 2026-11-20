@@ -1,217 +1,95 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
     <modelVersion>4.0.0</modelVersion>
-    <groupId>eu.clarin.cmdi</groupId>
-    <artifactId>vlo</artifactId>
-    <name>Virtual Language Observatory</name>
+    
     <packaging>pom</packaging>
-
-    <!-- When updating the version number here, also update the version number 
-    in each module's pom.xml -->
-    <version>4.11.6</version>
     
-    <description>Virtual Language Observatory (VLO) parent project</description>
-    <organization>
-        <name>CLARIN</name>
-        <url>http://www.clarin.eu</url>
-    </organization>
-    <url>https://vlo.clarin.eu</url>
+    <prerequisites>
+        <maven>3.6.3</maven>
+    </prerequisites>
     
-    <scm>
-        <connection>scm:git:ssh://git@github.com:clarin-eric/VLO.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:clarin-eric/VLO.git</developerConnection>
-        <url>https://github.com/clarin-eric/VLO</url>
-    </scm>
-
-    <modules>
-        <module>vlo-solr</module>
-        <module>vlo-commons</module>
-        <module>vlo-exposure</module>
-        <module>vlo-exposure-frontend</module>
-        <module>vlo-web-app</module>
-        <module>vlo-importer</module>
-        <module>vlo-vocabularies</module>
-        <module>vlo-sitemap</module>
-        <module>vlo-statistics</module>
-        <module>vlo-monitor</module>
-        <module>vlo-distribution</module>
-    </modules>
-
+    <groupId>eu.clarin.cmdi</groupId>
+    <artifactId>vlo-parent</artifactId>
+    <version>1.2-SNAPSHOT</version>
+    <name>VLO API</name>
+    <description>VLO API (parent project)</description>
+    
     <properties>
-        <!-- VLO-mapping project version to obtain default mappings from at build time -->
-        <vlo.mapping.version>1.7.1</vlo.mapping.version>
-        
-        <!-- Common runtime dependency versions -->
-        <solr.version>8.11.2</solr.version>
-        <slf4j.version>2.0.9</slf4j.version>
-        <log4j2.version>2.20.0</log4j2.version>
-        <saxon.version>9.8.0-15</saxon.version>
-        <spring.boot.version>3.2.0</spring.boot.version>
-        
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <netbeans.hint.license>gpl30</netbeans.hint.license>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <spring.boot.version>3.5.16</spring.boot.version>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
     
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>4.0.4</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse</groupId>
-                <artifactId>yasson</artifactId>
-                <version>3.0.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>33.0.0-jre</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.14.0</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <reporting>
+    <modules>
+        <module>vlo-api</module>
+        <module>vlo-api-model</module>
+    </modules>
+    
+    <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javancss-maven-plugin</artifactId>
-                <version>2.1</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>UTF-8</encoding>
+                    <parameters>true</parameters>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
         </plugins>
-    </reporting>
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
+    
     <repositories>
+        <repository>
+            <id>CLARIN central proxy</id>
+            <name>CLARIN Repository</name>
+            <url>https://nexus.clarin.eu/repository/central/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>CLARIN</id>
             <name>CLARIN Repository</name>
             <url>https://nexus.clarin.eu/content/repositories/Clarin</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>CLARIN-Snapshot</id>
             <name>CLARIN Snapshot Repository</name>
             <url>https://nexus.clarin.eu/content/repositories/clarin-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>sonatype-apache</id>
-            <url>https://repository.apache.org/releases</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
-                    <configuration>
-                        <systemPropertyVariables>
-                            <java.security.egd>file:/dev/./urandom</java.security.egd>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>2.2</version>
-                    <configuration>
-                        <!-- 
-                        <webapps>
-                            <webapp>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>vlo-web-app</artifactId>
-                                <contextPath>/vlo-web-app</contextPath>
-                                <version>${project.version}</version>
-                                <asWebapp>true</asWebapp> 
-                            </webapp>
-                            <webapp>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>vlo-exposure-frontend</artifactId>
-                                <contextPath>/vlo-exposure-frontend</contextPath>
-                                <version>${project.version}</version>
-                                <asWebapp>true</asWebapp>
-                            </webapp>
-                        </webapps> -->
-                        <port>8080</port>
-                        <path>/vlo</path>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <release>${maven.compiler.source}</release>
-                        <!--<compilerArgument>-Xlint:unchecked</compilerArgument>-->
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>CLARIN-Snapshot</id>
-            <url>https://nexus.clarin.eu/content/repositories/clarin-snapshot</url>
-        </snapshotRepository>
-        <repository>
-            <id>CLARIN</id>
-            <url>https://nexus.clarin.eu/content/repositories/Clarin</url>
-        </repository>
-    </distributionManagement>
     
-    <ciManagement>
-        <system>travis</system>
-        <url>https://travis-ci.org/clarin-eric/VLO</url>
-        <notifiers />
-    </ciManagement>
 </project>

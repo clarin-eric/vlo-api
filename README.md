@@ -1,64 +1,96 @@
-# Table of Contents
-- What is the VLO? 
-- What should I read? 
-- Setting up
-	- Preparing for release
-- Using the VLO
-	- Running an import
-	
-# What is the VLO?
+# VLO 5.0 prototype
 
-Using the VLO faceted browser, metadata can be searched and browsed by facet. It consists
-of three software components: a Solr server with VLO specific configuration, an importer
-and a web application front end.
+Collection of service prototypes, Spring (Boot) based.
 
-# What should I read?
+## Getting started quickly notes
 
-- [README](README.md)
-	This file; a general introduction
-- [DEVELOPMENT](DEVELOPMENT.md)
-	Information for developers
-- [DEPLOYMENT](DEPLOYMENT.md)
-	Instructions on how to deploy a fresh VLO installation
-- [UPGRADE](UPGRADE.txt)
-	Instructions on how to upgrade an existing VLO installation
-- [CHANGES](CHANGES.txt)
-	A list of changes per release
-- [LICENSE](LICENSE.md)
-	Licensing information
-	
-# Building
+### Build
 
-Build the project using Maven in the project root, or use the [build.sh](./build.sh)
-script, which will use a docker image with the correct version of Java and Maven to build.
-See the script source for more details.
+Build with maven profile `dev`.
 
+API tests only work if an ElasticSearch index is available. Start the service
+with the docker compose project in the `index` directory. Alternatively, skip 
+tests.
 
-# Running the VLO 
+### Starting
 
-After a successful [deployment](DEPLOYMENT.md) and configuration, you should be able to
-browse to the VLO web app and browse the imported records. You can also run the VLO
-locally using the docker image (see [compose_vlo](https://gitlab.com/CLARIN-ERIC/compose_vlo))
+The API is the central component. Always run it first. By default it runs on
+port 8708.
 
-If the VLO is empty, you will need to run an import first. 
+### Configuration
 
-## Running an import 
+Different profiles are available to run in elastic search mode or solr mode.
+There may be other modes. Solr mode can be used to run the API with the existing
+VLO 4.x Solr as a back end. Write does not work in that case.
 
-To run an import, go the `bin` child directory of the VLO application directory 
-and run
+When running in dev mode only, override configuration with a yaml file at
+`~/.config/spring-boot/spring-boot-devtools.yml`. Example config that could be
+used as a starting point: 
 
-`./vlo_solr_importer.sh`
-	
-as the appropriate user (e.g. `vlouser`). 
+```yaml
+logging:
+ level:
+   eu.clarin.cmdi.vlo.batchimporter: DEBUG
+   eu.clarin.cmdi.vlo.api: DEBUG
+   eu.clarin.cmdi.vlo.web: DEBUG
+   eu.clarin.cmdi.vlo.mapping: DEBUG
+#    org.springframework.batch: DEBUG
 
-It's advisable to run this in a detached background process (for example using 
-`screen`) because an import can take quite a long time depending on the amount
-of records to be imported. Also make sure that enough memory is available. 
-Some VM parameters are configured inside the script.
+# spring.profiles.active=solr
+spring:
+  profiles:
+    include:
+      - "solr"
+#      - elastic
+#      - elastic-test
+  application:
+    name: vlo-api
+  data:
+    elasticsearch:
+      client:
+        reactive:
+          endpoints: 127.0.0.1:9200
+          username: admin
+          password: admin
+          use-ssl: false
+  elasticsearch:
+    rest:
+      uris: http://admin:admin@127.0.0.1:9200
+  devtools:
+    livereload:
+        enabled: false
+vlo:
+  importer:
+    metadata-source:
+      roots: 
+        - name: 'Small test set'
+          path: /Users/twagoo/vlo/files/small_test_set
+  api:
+    security:
+      admin:
+        username: 'admin'
+        password: '{bcrypt}SET_AN_ACTUAL_PASSWORD_HASH'
+    mapping:
+      definitionUri: 'file:/Users/twagoo/Documents/Repositories/git/VLO-5.0/vlo-5.0/vlo-api/src/test/resources/test-mapping-definition.xml'
+    legacy:
+      config-location: '/Users/twagoo/vlo/vlo3/VloConfig.xml'
+    cache:
+      stats: true
+      search:
+        ttl:
+          seconds: 30
+      record:
+        ttl:
+          seconds: 30
+      facet:
+        ttl:
+          seconds: 30
 
-Some progress information is logged to a file `log/vlo-importer.log`. It gets
-rotated automatically by the import process.
+## remote (alpha)
+solr:
+  url: 'https://alpha-vlo.clarin.eu/solr/vlo-index/'
+  auth:
+    username: 'ASK_FOR_USERNAME'
+    password: 'ASK_FOR_PASSWORD'
+```
 
-For a __fresh import__, even when the VLO is not configured to delete all documents
-from the index first, you can simply remove the contents of the Solr data 
-directory (check server configuration documentation for the exact location).
