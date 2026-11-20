@@ -12,7 +12,7 @@ on:
   push:
     branches: [ "**" ]
   pull_request:
-    branches: [ "master", "develop", "vlo-5.0" ]
+    branches: [ "master", "develop" ]
 
 jobs:
   build:
@@ -28,5 +28,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      working-directory: vlo-5.0
       run: mvn -B package --file pom.xml
